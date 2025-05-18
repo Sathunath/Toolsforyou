@@ -2,755 +2,990 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TapSwap Mini App</title>
-    <style>
-        :root {
-            --primary-color: #007bff;
-            --secondary-color: #6c757d;
-            --background-color: #f8f9fa;
-            --surface-color: #ffffff;
-            --text-color: #212529;
-            --text-light-color: #6c757d;
-            --success-color: #28a745;
-            --warning-color: #ffc107;
-            --danger-color: #dc3545;
-            --border-color: #dee2e6;
-            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            --bottom-nav-height: 60px;
-            --header-height: 50px;
-        }
-
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            font-family: var(--font-family);
-            background-color: var(--background-color);
-            color: var(--text-color);
-            overflow: hidden; /* Prevent scrollbars on body */
-        }
-
-        #app-container {
-            display: flex;
-            flex-direction: column;
-            height: 100vh; /* Full viewport height */
-            background-color: var(--background-color);
-        }
-
-        .page-header {
-            height: var(--header-height);
-            background-color: var(--surface-color);
-            color: var(--primary-color);
-            font-size: 1.2em;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-bottom: 1px solid var(--border-color);
-            padding: 0 15px;
-            box-sizing: border-box;
-        }
-        
-        .page-content-wrapper {
-            flex-grow: 1;
-            overflow-y: auto; /* Enable scrolling for page content */
-            padding-bottom: var(--bottom-nav-height); /* Space for bottom nav */
-        }
-
-        .page {
-            display: none; /* Hidden by default */
-            flex-direction: column; /* Ensure pages can have internal flex layouts */
-            height: 100%; /* Make page take full height of its container */
-        }
-
-        .page.active {
-            display: flex; /* Show active page */
-        }
-
-        .page-content {
-            padding: 20px;
-            flex-grow: 1;
-        }
-
-        #bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: var(--bottom-nav-height);
-            background-color: var(--surface-color);
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            z-index: 1000;
-            padding-bottom: env(safe-area-inset-bottom); /* For iOS notches */
-        }
-
-        #bottom-nav button {
-            background: none;
-            border: none;
-            color: var(--secondary-color);
-            font-size: 10px;
-            cursor: pointer;
-            padding: 8px 5px;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-        }
-        
-        #bottom-nav button .icon {
-            font-size: 20px; /* Icon size */
-            margin-bottom: 4px;
-        }
-
-        #bottom-nav button.active {
-            color: var(--primary-color);
-            font-weight: bold;
-        }
-
-        /* Tap Page specific styles */
-        #tap-page-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
-
-        #points-display {
-            font-size: 2.5em;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: var(--primary-color);
-        }
-        
-        #dog-tap-area {
-            width: 150px;
-            height: 150px;
-            background-color: var(--warning-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 5em; /* Dog emoji size */
-            cursor: pointer;
-            user-select: none;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: transform 0.1s ease-out;
-        }
-        #dog-tap-area:active {
-            transform: scale(0.95);
-        }
-
-        #energy-bar-container {
-            width: 80%;
-            max-width: 300px;
-            height: 25px;
-            background-color: var(--border-color);
-            border-radius: 12.5px;
-            overflow: hidden;
-            margin-bottom: 10px;
-        }
-
-        #energy-bar {
-            width: 100%;
-            height: 100%;
-            background-color: var(--success-color);
-            border-radius: 12.5px;
-            transition: width 0.2s ease-in-out;
-        }
-
-        #energy-text {
-            font-size: 0.9em;
-            color: var(--text-light-color);
-        }
-
-        .floating-point {
-            position: absolute;
-            font-size: 1.5em;
-            color: var(--primary-color);
-            opacity: 1;
-            animation: floatUp 1s ease-out forwards;
-            pointer-events: none; /* So it doesn't interfere with taps */
-        }
-
-        @keyframes floatUp {
-            to {
-                transform: translateY(-50px);
-                opacity: 0;
-            }
-        }
-
-        /* Profile, Task, Withdraw Page common styles */
-        .info-item, .task-item, .withdraw-option {
-            background-color: var(--surface-color);
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-        }
-        .info-item strong { color: var(--primary-color); }
-
-        /* Task Page specific styles */
-        .task-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .task-item button {
-            padding: 8px 12px;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .task-item button:disabled {
-            background-color: var(--secondary-color);
-            cursor: not-allowed;
-        }
-
-        /* Withdraw Page specific styles */
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        .form-group input[type="number"],
-        .form-group input[type="text"],
-        .form-group input[type="email"],
-        .form-group select {
-            width: calc(100% - 22px); /* Full width minus padding and border */
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 5px;
-            font-size: 1em;
-        }
-        #withdraw-button {
-            width: 100%;
-            padding: 12px;
-            background-color: var(--success-color);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 1.1em;
-            cursor: pointer;
-        }
-        #withdraw-button:disabled {
-            background-color: var(--secondary-color);
-        }
-        .withdraw-details { display: none; }
-        .withdraw-details.active { display: block; }
-
-        /* Toast Notification */
-        #toast-notification {
-            position: fixed;
-            bottom: calc(var(--bottom-nav-height) + 20px); /* Above bottom nav */
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(0,0,0,0.75);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            z-index: 2000;
-            opacity: 0;
-            transition: opacity 0.3s ease, bottom 0.3s ease;
-            visibility: hidden;
-        }
-        #toast-notification.show {
-            opacity: 1;
-            visibility: visible;
-            bottom: calc(var(--bottom-nav-height) + 30px);
-        }
-
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tools Hub - Your Daily Tools, All in One Place</title>
+    <!-- Favicon (example - generate a real one) -->
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <!-- Link to your CSS file -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Consider using an icon library like FontAwesome or Heroicons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div id="app-container">
-        <!-- Profile Page -->
-        <div id="profile-page" class="page">
-            <div class="page-header">Profile</div>
-            <div class="page-content">
-                <div class="info-item"><strong>Name:</strong> <span id="profile-name"></span></div>
-                <div class="info-item"><strong>User ID:</strong> <span id="profile-userid"></span></div>
-                <div class="info-item"><strong>Points:</strong> <span id="profile-points"></span></div>
-                <div class="info-item"><strong>Joined:</strong> <span id="profile-join-date"></span></div>
-                <div class="info-item"><strong>Referral Code:</strong> <span id="profile-referral"></span></div>
+
+    <!-- ====== Top Header ====== -->
+    <header class="site-header">
+        <div class="container header-container">
+            <a href="index.html" class="logo">Tools Wonder</a>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html" class="active">Home</a></li>
+                    <li><a href="#tools">Tools</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="header-contact">
+                <a href="mailto:toolsHub@gmail.com" class="email-link">
+                    <i class="fas fa-envelope"></i> toolsHub@gmail.com
+                </a>
+            </div>
+            <button class="mobile-nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <!-- ====== Hero Section ====== -->
+        <section class="hero-section">
+            <div class="container hero-content">
+                <h1>Your Daily Tools, All in One Place</h1>
+                <p class="subheadline">Convert, calculate, compress, and simplify your everyday tasks — fast and free.</p>
+                <a href="#tools" class="cta-button">Explore Tools</a>
+                <div class="hero-illustrations">
+                    <!-- Simple icons representing tool categories -->
+                    <span class="hero-icon"><i class="fas fa-image"></i> Image</span>
+                    <span class="hero-icon"><i class="fas fa-file-alt"></i> Document</span>
+                    <span class="hero-icon"><i class="fas fa-calculator"></i> Calculate</span>
+                    <span class="hero-icon"><i class="fas fa-code"></i> Code</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ====== Search Bar Section ====== -->
+        <section class="search-section">
+            <div class="container">
+                <form id="toolSearchForm" class="search-bar">
+                    <input type="search" id="toolSearchInput" placeholder="Search a tool by name or keyword…">
+                    <button type="submit" aria-label="Search"><i class="fas fa-search"></i></button>
+                </form>
+            </div>
+        </section>
+
+        <!-- ====== Tools Sections ====== -->
+        <div id="tools" class="tools-anchor"></div> <!-- Anchor for "Explore Tools" and Nav -->
+
+        <!-- 🖼 Image Tools -->
+        <section class="tool-category-section" data-category="Image Tools">
+            <div class="container">
+                <h2 class="section-heading">🖼 Image Tools</h2>
+                <p class="section-subheading">Manipulate and optimize your images with ease.</p>
+                <div class="tool-grid">
+                    <!-- Tool Card Example -->
+                    <div class="tool-card" data-tool-name="Image Converter" data-keywords="convert jpg png webp gif">
+                        <div class="tool-icon"><i class="fas fa-exchange-alt"></i></div>
+                        <h3 class="tool-name">Image Converter</h3>
+                        <p class="tool-description">Convert images between various formats (JPG, PNG, WEBP, etc.).</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Image Compressor" data-keywords="compress reduce size optimize">
+                        <div class="tool-icon"><i class="fas fa-compress-arrows-alt"></i></div>
+                        <h3 class="tool-name">Image Compressor</h3>
+                        <p class="tool-description">Reduce image file size without significant quality loss.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Image Resizer" data-keywords="resize scale dimensions">
+                        <div class="tool-icon"><i class="fas fa-crop-alt"></i></div> <!-- More like crop but also used for resize-->
+                        <h3 class="tool-name">Image Resizer</h3>
+                        <p class="tool-description">Change image dimensions to your desired width and height.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Image Cropper" data-keywords="crop select area">
+                        <div class="tool-icon"><i class="fas fa-crop"></i></div>
+                        <h3 class="tool-name">Image Cropper</h3>
+                        <p class="tool-description">Crop images to a specific area or aspect ratio.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Image to Text (OCR)" data-keywords="ocr extract text scan">
+                        <div class="tool-icon"><i class="fas fa-file-signature"></i></div>
+                        <h3 class="tool-name">Image to Text (OCR)</h3>
+                        <p class="tool-description">Extract text content from images accurately.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Image Rotator/Flipper" data-keywords="rotate flip mirror">
+                        <div class="tool-icon"><i class="fas fa-sync-alt"></i></div>
+                        <h3 class="tool-name">Image Rotator/Flipper</h3>
+                        <p class="tool-description">Rotate or flip your images horizontally or vertically.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 📄 Document Tools -->
+        <section class="tool-category-section" data-category="Document Tools">
+            <div class="container">
+                <h2 class="section-heading">📄 Document Tools</h2>
+                <p class="section-subheading">Manage your PDF and other document files efficiently.</p>
+                <div class="tool-grid">
+                    <div class="tool-card" data-tool-name="PDF to Word / Word to PDF" data-keywords="pdf word doc docx convert">
+                        <div class="tool-icon"><i class="fas fa-file-word"></i></div>
+                        <h3 class="tool-name">PDF to Word / Word to PDF</h3>
+                        <p class="tool-description">Convert PDFs to editable Word files and vice versa.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="PDF Compressor" data-keywords="pdf compress reduce size">
+                        <div class="tool-icon"><i class="fas fa-file-archive"></i></div>
+                        <h3 class="tool-name">PDF Compressor</h3>
+                        <p class="tool-description">Reduce the file size of your PDF documents.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="PDF Merger & Splitter" data-keywords="pdf merge combine split separate">
+                        <div class="tool-icon"><i class="fas fa-object-group"></i></div>
+                        <h3 class="tool-name">PDF Merger & Splitter</h3>
+                        <p class="tool-description">Combine multiple PDFs or split one into several.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                     <div class="tool-card" data-tool-name="Document Converter" data-keywords="convert files office text">
+                        <div class="tool-icon"><i class="fas fa-file-export"></i></div>
+                        <h3 class="tool-name">Document Converter</h3>
+                        <p class="tool-description">Convert various document types (DOC, TXT, ODT, etc.).</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="PDF Lock/Unlock" data-keywords="pdf protect secure encrypt decrypt password">
+                        <div class="tool-icon"><i class="fas fa-lock"></i> / <i class="fas fa-unlock"></i></div>
+                        <h3 class="tool-name">PDF Lock/Unlock</h3>
+                        <p class="tool-description">Add or remove password protection from PDFs.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="eSign PDF" data-keywords="pdf sign signature digital electronic">
+                        <div class="tool-icon"><i class="fas fa-signature"></i></div>
+                        <h3 class="tool-name">eSign PDF</h3>
+                        <p class="tool-description">Electronically sign your PDF documents quickly.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 🧮 Calculator Tools -->
+        <section class="tool-category-section" data-category="Calculator Tools">
+            <div class="container">
+                <h2 class="section-heading">🧮 Calculator Tools</h2>
+                <p class="section-subheading">Perform various calculations for finance, health, and more.</p>
+                <div class="tool-grid">
+                    <div class="tool-card" data-tool-name="Scientific Calculator" data-keywords="math science functions">
+                        <div class="tool-icon"><i class="fas fa-calculator"></i></div>
+                        <h3 class="tool-name">Scientific Calculator</h3>
+                        <p class="tool-description">Advanced calculator with scientific functions.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Age Calculator" data-keywords="age birthday years months days">
+                        <div class="tool-icon"><i class="fas fa-birthday-cake"></i></div>
+                        <h3 class="tool-name">Age Calculator</h3>
+                        <p class="tool-description">Calculate age based on birth date.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="BMI Calculator" data-keywords="bmi body mass index health weight">
+                        <div class="tool-icon"><i class="fas fa-heartbeat"></i></div>
+                        <h3 class="tool-name">BMI Calculator</h3>
+                        <p class="tool-description">Calculate your Body Mass Index.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Loan EMI Calculator" data-keywords="loan emi interest mortgage payment">
+                        <div class="tool-icon"><i class="fas fa-money-check-alt"></i></div>
+                        <h3 class="tool-name">Loan EMI Calculator</h3>
+                        <p class="tool-description">Estimate your Equated Monthly Installments.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="GST Calculator" data-keywords="gst tax goods services tax">
+                        <div class="tool-icon"><i class="fas fa-percentage"></i></div>
+                        <h3 class="tool-name">GST Calculator</h3>
+                        <p class="tool-description">Calculate Goods and Services Tax.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Currency Converter" data-keywords="currency exchange rate money">
+                        <div class="tool-icon"><i class="fas fa-coins"></i></div>
+                        <h3 class="tool-name">Currency Converter</h3>
+                        <p class="tool-description">Convert between different world currencies.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 🔤 Text Tools -->
+        <section class="tool-category-section" data-category="Text Tools">
+            <div class="container">
+                <h2 class="section-heading">🔤 Text Tools</h2>
+                <p class="section-subheading">Format, analyze, and manipulate your text content.</p>
+                <div class="tool-grid">
+                    <div class="tool-card" data-tool-name="Text Case Converter" data-keywords="text case uppercase lowercase title sentence">
+                        <div class="tool-icon"><i class="fas fa-font"></i></div>
+                        <h3 class="tool-name">Text Case Converter</h3>
+                        <p class="tool-description">Change text to uppercase, lowercase, title case, etc.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Word & Character Counter" data-keywords="word character count length">
+                        <div class="tool-icon"><i class="fas fa-sort-numeric-down"></i></div>
+                        <h3 class="tool-name">Word & Character Counter</h3>
+                        <p class="tool-description">Count words and characters in your text.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Remove Duplicate Lines" data-keywords="text remove duplicate lines unique">
+                        <div class="tool-icon"><i class="fas fa-stream"></i></div>
+                        <h3 class="tool-name">Remove Duplicate Lines</h3>
+                        <p class="tool-description">Eliminate repeated lines from your text.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Text Sorter" data-keywords="text sort lines alphabetical numerical">
+                        <div class="tool-icon"><i class="fas fa-sort-alpha-down"></i></div>
+                        <h3 class="tool-name">Text Sorter</h3>
+                        <p class="tool-description">Sort lines of text alphabetically or numerically.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Text Reverser" data-keywords="text reverse backward words lines">
+                        <div class="tool-icon"><i class="fas fa-undo-alt"></i></div>
+                        <h3 class="tool-name">Text Reverser</h3>
+                        <p class="tool-description">Reverse the order of characters, words, or lines.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Text Encryptor/Decryptor" data-keywords="text encrypt decrypt secure cipher">
+                        <div class="tool-icon"><i class="fas fa-user-secret"></i></div>
+                        <h3 class="tool-name">Text Encryptor/Decryptor</h3>
+                        <p class="tool-description">Encrypt or decrypt text using various algorithms.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 🌐 Web/Developer Tools -->
+        <section class="tool-category-section" data-category="Web Developer Tools">
+            <div class="container">
+                <h2 class="section-heading">🌐 Web/Developer Tools</h2>
+                <p class="section-subheading">Essential utilities for web developers and programmers.</p>
+                <div class="tool-grid">
+                    <div class="tool-card" data-tool-name="HTML/CSS/JS Minifier" data-keywords="minify html css js javascript optimize">
+                        <div class="tool-icon"><i class="fab fa-html5"></i> <i class="fab fa-css3-alt"></i> <i class="fab fa-js-square"></i></div>
+                        <h3 class="tool-name">HTML/CSS/JS Minifier</h3>
+                        <p class="tool-description">Reduce file size of your web code.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="JSON Formatter & Validator" data-keywords="json format validate beautify lint">
+                        <div class="tool-icon"><i class="fas fa-code-branch"></i></div> <!-- Generic code icon -->
+                        <h3 class="tool-name">JSON Formatter & Validator</h3>
+                        <p class="tool-description">Format, beautify, and validate JSON data.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Base64 Encoder/Decoder" data-keywords="base64 encode decode string binary">
+                        <div class="tool-icon"><i class="fas fa-shield-alt"></i></div> <!-- Icon for encoding/security -->
+                        <h3 class="tool-name">Base64 Encoder/Decoder</h3>
+                        <p class="tool-description">Encode to or decode from Base64.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="URL Encoder/Decoder" data-keywords="url encode decode percent encoding">
+                        <div class="tool-icon"><i class="fas fa-link"></i></div>
+                        <h3 class="tool-name">URL Encoder/Decoder</h3>
+                        <p class="tool-description">Encode or decode URL components.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Color Picker & Converter" data-keywords="color picker hex rgb hsl convert">
+                        <div class="tool-icon"><i class="fas fa-palette"></i></div>
+                        <h3 class="tool-name">Color Picker & Converter</h3>
+                        <p class="tool-description">Pick colors and convert between formats.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                     <div class="tool-card" data-tool-name="Regex Tester" data-keywords="regex regular expression test match pattern">
+                        <div class="tool-icon"><i class="fas fa-search-plus"></i></div> <!-- Icon for pattern matching -->
+                        <h3 class="tool-name">Regex Tester</h3>
+                        <p class="tool-description">Test and debug regular expressions live.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 🎨 Color Tools -->
+        <section class="tool-category-section" data-category="Color Tools">
+            <div class="container">
+                <h2 class="section-heading">🎨 Color Tools</h2>
+                <p class="section-subheading">Explore, generate, and analyze colors for your projects.</p>
+                <div class="tool-grid">
+                    <div class="tool-card" data-tool-name="Color Picker from Image" data-keywords="color picker image extract eyedropper">
+                        <div class="tool-icon"><i class="fas fa-eye-dropper"></i></div>
+                        <h3 class="tool-name">Color Picker from Image</h3>
+                        <p class="tool-description">Extract colors from an uploaded image.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="HEX to RGB Converter" data-keywords="hex rgb color code convert">
+                        <div class="tool-icon"><i class="fas fa-fill-drip"></i></div>
+                        <h3 class="tool-name">HEX to RGB Converter</h3>
+                        <p class="tool-description">Convert HEX color codes to RGB and vice versa.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Gradient Generator" data-keywords="gradient css background color">
+                        <div class="tool-icon"><i class="fas fa-palette"></i></div> <!-- Using palette as it implies multiple colors -->
+                        <h3 class="tool-name">Gradient Generator</h3>
+                        <p class="tool-description">Create CSS color gradients visually.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Contrast Checker" data-keywords="color contrast accessibility wcag">
+                        <div class="tool-icon"><i class="fas fa-adjust"></i></div>
+                        <h3 class="tool-name">Contrast Checker</h3>
+                        <p class="tool-description">Check color contrast for accessibility.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Palette Generator" data-keywords="color palette scheme generator">
+                        <div class="tool-icon"><i class="fas fa-swatchbook"></i></div>
+                        <h3 class="tool-name">Palette Generator</h3>
+                        <p class="tool-description">Generate harmonious color palettes.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Color Blindness Simulator" data-keywords="color blind simulate accessibility vision">
+                        <div class="tool-icon"><i class="fas fa-low-vision"></i></div>
+                        <h3 class="tool-name">Color Blindness Simulator</h3>
+                        <p class="tool-description">Simulate how colors appear to color-blind users.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 🌍 SEO & Marketing Tools -->
+        <section class="tool-category-section" data-category="SEO Marketing Tools">
+            <div class="container">
+                <h2 class="section-heading">🌍 SEO & Marketing Tools</h2>
+                <p class="section-subheading">Analyze and optimize your content for search engines and marketing.</p>
+                <div class="tool-grid">
+                     <div class="tool-card" data-tool-name="Keyword Density Checker" data-keywords="seo keyword density analysis content">
+                        <div class="tool-icon"><i class="fas fa-search-dollar"></i></div> <!-- Search with a focus on value -->
+                        <h3 class="tool-name">Keyword Density Checker</h3>
+                        <p class="tool-description">Analyze the keyword density of your text.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Meta Tag Analyzer" data-keywords="seo meta tags title description analyzer">
+                        <div class="tool-icon"><i class="fas fa-tags"></i></div>
+                        <h3 class="tool-name">Meta Tag Analyzer</h3>
+                        <p class="tool-description">Analyze meta tags of a webpage.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Word Counter" data-keywords="seo word count content length marketing">
+                        <div class="tool-icon"><i class="fas fa-file-word"></i></div> <!-- Re-using for word count focus -->
+                        <h3 class="tool-name">Word Counter</h3>
+                        <p class="tool-description">Count words in your articles or posts.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 🛠️ Utility Tools -->
+        <section class="tool-category-section" data-category="Utility Tools">
+            <div class="container">
+                <h2 class="section-heading">🛠️ Utility Tools</h2>
+                <p class="section-subheading">A collection of handy miscellaneous utilities for various tasks.</p>
+                <div class="tool-grid">
+                    <div class="tool-card" data-tool-name="QR Code Generator & Scanner" data-keywords="qr code generator scanner generate scan">
+                        <div class="tool-icon"><i class="fas fa-qrcode"></i></div>
+                        <h3 class="tool-name">QR Code Generator & Scanner</h3>
+                        <p class="tool-description">Create and read QR codes easily.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Barcode Generator" data-keywords="barcode generator create">
+                        <div class="tool-icon"><i class="fas fa-barcode"></i></div>
+                        <h3 class="tool-name">Barcode Generator</h3>
+                        <p class="tool-description">Generate various types of barcodes.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="UUID Generator" data-keywords="uuid guid generate unique identifier">
+                        <div class="tool-icon"><i class="fas fa-fingerprint"></i></div> <!-- For uniqueness -->
+                        <h3 class="tool-name">UUID Generator</h3>
+                        <p class="tool-description">Generate universally unique identifiers.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                     <div class="tool-card" data-tool-name="Unit Converter" data-keywords="unit convert length weight temperature volume">
+                        <div class="tool-icon"><i class="fas fa-balance-scale-right"></i></div>
+                        <h3 class="tool-name">Unit Converter</h3>
+                        <p class="tool-description">Convert between various units of measurement.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Time Zone Converter" data-keywords="time zone world clock convert">
+                        <div class="tool-icon"><i class="fas fa-globe-americas"></i></div>
+                        <h3 class="tool-name">Time Zone Converter</h3>
+                        <p class="tool-description">Convert times between different time zones.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Random Number/Password Generator" data-keywords="random number password generate secure">
+                        <div class="tool-icon"><i class="fas fa-random"></i> <i class="fas fa-key"></i></div>
+                        <h3 class="tool-name">Random Number/Password Generator</h3>
+                        <p class="tool-description">Generate random numbers or secure passwords.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ====== Footer ====== -->
+    <footer class="site-footer-main" id="contact">
+        <div class="container footer-content">
+            <div class="footer-logo-tagline">
+                <a href="index.html" class="logo footer-logo">Tools Wonder</a>
+                <p class="tagline">Simplifying your digital life.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Use</a></li>
+                    <li><a href="#tools">All Tools</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h4>Contact Us</h4>
+                <a href="mailto:webtool4433@gmail.com" class="email-link">
+                    <i class="fas fa-envelope"></i> webtool4433@gmail.com
+                </a>
+                <p class="contact-note">For inquiries and support.</p>
             </div>
         </div>
-
-        <!-- Tap Page -->
-        <div id="tap-page" class="page">
-            <div class="page-header">TapSwap</div>
-            <div class="page-content" id="tap-page-content">
-                <div id="points-display">0</div>
-                <div id="dog-tap-area">🐕</div>
-                <div id="energy-bar-container">
-                    <div id="energy-bar"></div>
-                </div>
-                <div id="energy-text">100/100</div>
-            </div>
+        <div class="footer-bottom">
+            <p>© <span id="currentYear"></span> Tools Hub. All rights reserved.</p>
         </div>
+    </footer>
 
-        <!-- Task Page -->
-        <div id="task-page" class="page">
-            <div class="page-header">Tasks</div>
-            <div class="page-content" id="task-list">
-                <!-- Tasks will be rendered here by JS -->
-            </div>
-        </div>
-
-        <!-- Withdraw Page -->
-        <div id="withdraw-page" class="page">
-            <div class="page-header">Withdraw</div>
-            <div class="page-content">
-                <div class="info-item"><strong>Available Points:</strong> <span id="withdraw-available-points"></span></div>
-                <div class="form-group">
-                    <label for="withdraw-amount">Amount to Withdraw:</label>
-                    <input type="number" id="withdraw-amount" placeholder="Enter amount">
-                </div>
-                <div class="form-group">
-                    <label for="withdraw-method">Withdrawal Method:</label>
-                    <select id="withdraw-method">
-                        <option value="">-- Select Method --</option>
-                        <option value="paypal">PayPal</option>
-                        <option value="bank">Wire Transfer</option>
-                        <option value="crypto">Crypto (USDT)</option>
-                    </select>
-                </div>
-                
-                <div id="paypal-details" class="withdraw-details">
-                    <div class="form-group">
-                        <label for="paypal-email">PayPal Email:</label>
-                        <input type="email" id="paypal-email" placeholder="your.email@example.com">
-                    </div>
-                </div>
-                <div id="bank-details" class="withdraw-details">
-                    <div class="form-group">
-                        <label for="bank-account-name">Account Holder Name:</label>
-                        <input type="text" id="bank-account-name" placeholder="Full Name">
-                    </div>
-                    <div class="form-group">
-                        <label for="bank-account-number">Account Number:</label>
-                        <input type="text" id="bank-account-number" placeholder="Account Number">
-                    </div>
-                    <div class="form-group">
-                        <label for="bank-swift-code">SWIFT/BIC Code:</label>
-                        <input type="text" id="bank-swift-code" placeholder="SWIFT or BIC">
-                    </div>
-                </div>
-                 <div id="crypto-details" class="withdraw-details">
-                    <div class="form-group">
-                        <label for="crypto-address">USDT Wallet Address (TRC20):</label>
-                        <input type="text" id="crypto-address" placeholder="Your TRC20 USDT Address">
-                    </div>
-                </div>
-                <button id="withdraw-button">Withdraw Points</button>
-            </div>
-        </div>
-    </div>
-
-    <nav id="bottom-nav">
-        <button data-page="profile-page"><span class="icon">👤</span>Profile</button>
-        <button data-page="tap-page" class="active"><span class="icon">👆</span>Tap</button>
-        <button data-page="task-page"><span class="icon">📝</span>Tasks</button>
-        <button data-page="withdraw-page"><span class="icon">💸</span>Withdraw</button>
-    </nav>
-
-    <div id="toast-notification"></div>
-
-    <script>
-        // Mock Telegram WebApp object if not running in Telegram environment
-        if (typeof Telegram === 'undefined') {
-            window.Telegram = {
-                WebApp: {
-                    ready: () => console.log("Telegram.WebApp.ready() called (mocked)"),
-                    initDataUnsafe: {
-                        user: {
-                            id: 123456789,
-                            first_name: "Demo",
-                            last_name: "User",
-                            username: "demouser",
-                            language_code: "en"
-                        }
-                    },
-                    HapticFeedback: {
-                        impactOccurred: (style) => console.log(`Haptic feedback: ${style} (mocked)`),
-                        notificationOccurred: (type) => console.log(`Haptic notification: ${type} (mocked)`),
-                        selectionChanged: () => console.log(`Haptic selection changed (mocked)`)
-                    },
-                    expand: () => console.log("WebApp expanded (mocked)"),
-                    // You can add more mock methods if needed
-                }
-            };
-            console.log("Telegram WebApp mocked for browser use.");
-        }
-
-        // --- Constants ---
-        const LOCAL_STORAGE_KEY = 'tapSwapUserData_v3';
-        const MAX_ENERGY = 1000;
-        const ENERGY_PER_TAP = 10;
-        const POINTS_PER_TAP = 1;
-        const ENERGY_REFILL_INTERVAL_MS = 1000; // Check every second
-        const ENERGY_REFILL_RATE_PER_SECOND = 2; // Energy points refilled per second
-
-        // --- App State ---
-        let appState = {
-            currentUser: Telegram.WebApp.initDataUnsafe.user || { first_name: "Guest", id: '00000', username: 'guest' },
-            points: 0,
-            energy: MAX_ENERGY,
-            joinDate: new Date().toISOString(),
-            referralCode: `REF${(Telegram.WebApp.initDataUnsafe.user ? Telegram.WebApp.initDataUnsafe.user.id : 'DEMOUSER')}`,
-            tasks: [
-                { id: 'yt1', title: "Watch Intro Video", reward: 1000, completed: false, url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ" },
-                { id: 'yt2', title: "Learn Tapping Basics", reward: 1200, completed: false, url: "https://www.youtube.com/watch?v=oHg5SJYRHA0" },
-                { id: 'yt3', title: "Understand Energy", reward: 800, completed: false, url: "https://www.youtube.com/watch?v=C0DPdy98e4c" },
-                { id: 'yt4', title: "Check Withdrawal Options", reward: 1500, completed: false, url: "https://www.youtube.com/watch?v=V-_O7nl0Ii0" },
-                { id: 'yt5', title: "Join Community", reward: 500, completed: false, url: "https://www.youtube.com/watch?v=8ybW48rKBME" }
-            ],
-            lastEnergyUpdateTimestamp: Date.now(),
-            activePage: 'tap-page',
-        };
-
-        // --- DOM Elements ---
-        const DOMElements = {
-            pages: document.querySelectorAll('.page'),
-            navButtons: document.querySelectorAll('#bottom-nav button'),
-            
-            // Profile Page
-            profileName: document.getElementById('profile-name'),
-            profileUserId: document.getElementById('profile-userid'),
-            profilePoints: document.getElementById('profile-points'),
-            profileJoinDate: document.getElementById('profile-join-date'),
-            profileReferral: document.getElementById('profile-referral'),
-
-            // Tap Page
-            pointsDisplay: document.getElementById('points-display'),
-            dogTapArea: document.getElementById('dog-tap-area'),
-            energyBar: document.getElementById('energy-bar'),
-            energyText: document.getElementById('energy-text'),
-            tapPageContent: document.getElementById('tap-page-content'),
-
-
-            // Task Page
-            taskList: document.getElementById('task-list'),
-
-            // Withdraw Page
-            withdrawAvailablePoints: document.getElementById('withdraw-available-points'),
-            withdrawAmountInput: document.getElementById('withdraw-amount'),
-            withdrawMethodSelect: document.getElementById('withdraw-method'),
-            paypalDetailsDiv: document.getElementById('paypal-details'),
-            bankDetailsDiv: document.getElementById('bank-details'),
-            cryptoDetailsDiv: document.getElementById('crypto-details'),
-            withdrawButton: document.getElementById('withdraw-button'),
-
-            // Toast
-            toastNotification: document.getElementById('toast-notification'),
-        };
-
-        // --- Local Storage ---
-        function saveData() {
-            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(appState));
-        }
-
-        function loadData() {
-            const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
-            if (savedData) {
-                const parsedData = JSON.parse(savedData);
-                // Merge tasks carefully: keep existing task structure but update completion status
-                const currentTaskIds = new Set(appState.tasks.map(t => t.id));
-                const savedTasks = parsedData.tasks.filter(st => currentTaskIds.has(st.id));
-                
-                // Update completion status from saved data
-                appState.tasks.forEach(currentTask => {
-                    const savedTask = savedTasks.find(st => st.id === currentTask.id);
-                    if (savedTask) {
-                        currentTask.completed = savedTask.completed;
-                    }
-                });
-
-                // Update other state properties
-                appState = {
-                    ...appState, // Keeps default tasks and currentUser from latest code
-                    ...parsedData, // Overwrites with saved data
-                    tasks: [...appState.tasks] // Uses the merged tasks
-                };
-
-                // Ensure currentUser is up-to-date from Telegram if available
-                 appState.currentUser = Telegram.WebApp.initDataUnsafe.user || appState.currentUser;
-                 appState.referralCode = `REF${(appState.currentUser.id || 'DEMOUSER')}`;
-
-
-            } else {
-                // If no saved data, use initial appState, which already includes Telegram user if available
-                appState.joinDate = new Date().toISOString(); // Set join date to now for new users
-                 appState.lastEnergyUpdateTimestamp = Date.now();
-            }
-            // Always ensure energy isn't stale
-            refillEnergy(); // Initial energy calculation based on time passed
-        }
-
-        // --- UI Update Functions ---
-        function showPage(pageId) {
-            appState.activePage = pageId;
-            DOMElements.pages.forEach(page => {
-                page.classList.toggle('active', page.id === pageId);
-            });
-            DOMElements.navButtons.forEach(button => {
-                button.classList.toggle('active', button.dataset.page === pageId);
-            });
-
-            // Render page content when it becomes active
-            if (pageId === 'profile-page') renderProfilePage();
-            if (pageId === 'task-page') renderTaskPage();
-            if (pageId === 'withdraw-page') renderWithdrawPage();
-            // Tap page is mostly dynamic, its core elements (points, energy) update constantly
-            updatePointsDisplay();
-            updateEnergyDisplay();
-        }
-        
-        function updatePointsDisplay() {
-            const formattedPoints = Math.floor(appState.points).toLocaleString();
-            if (DOMElements.pointsDisplay) DOMElements.pointsDisplay.textContent = formattedPoints;
-            if (DOMElements.profilePoints) DOMElements.profilePoints.textContent = formattedPoints;
-            if (DOMElements.withdrawAvailablePoints) DOMElements.withdrawAvailablePoints.textContent = formattedPoints;
-        }
-
-        function updateEnergyDisplay() {
-            const energyPercentage = (appState.energy / MAX_ENERGY) * 100;
-            if (DOMElements.energyBar) DOMElements.energyBar.style.width = `${energyPercentage}%`;
-            if (DOMElements.energyText) DOMElements.energyText.textContent = `${Math.floor(appState.energy)}/${MAX_ENERGY}`;
-        }
-
-        function renderProfilePage() {
-            DOMElements.profileName.textContent = `${appState.currentUser.first_name || ''} ${appState.currentUser.last_name || ''}`.trim() || 'N/A';
-            DOMElements.profileUserId.textContent = appState.currentUser.id || 'N/A';
-            DOMElements.profileJoinDate.textContent = new Date(appState.joinDate).toLocaleDateString();
-            DOMElements.profileReferral.textContent = appState.referralCode;
-        }
-
-        function renderTaskPage() {
-            DOMElements.taskList.innerHTML = ''; // Clear existing tasks
-            appState.tasks.forEach(task => {
-                const taskItem = document.createElement('div');
-                taskItem.className = 'task-item';
-                taskItem.innerHTML = `
-                    <div>
-                        <strong>${task.title}</strong><br>
-                        <small>Reward: ${task.reward.toLocaleString()} points</small>
-                    </div>
-                    <button data-task-id="${task.id}" ${task.completed ? 'disabled' : ''}>
-                        ${task.completed ? 'Claimed' : 'Complete Task'}
-                    </button>
-                `;
-                const button = taskItem.querySelector('button');
-                if (!task.completed) {
-                    button.onclick = () => completeTask(task.id);
-                }
-                DOMElements.taskList.appendChild(taskItem);
-            });
-        }
-        
-        function renderWithdrawPage() {
-            DOMElements.withdrawAmountInput.value = '';
-            DOMElements.withdrawMethodSelect.value = '';
-            toggleWithdrawDetails(''); // Hide all detail sections
-            updatePointsDisplay(); // Ensure available points is current
-        }
-
-        // --- Core Logic ---
-        function handleTap(event) {
-            refillEnergy(); // Update energy before tap
-            if (appState.energy >= ENERGY_PER_TAP) {
-                appState.energy -= ENERGY_PER_TAP;
-                appState.points += POINTS_PER_TAP;
-                
-                updatePointsDisplay();
-                updateEnergyDisplay();
-                saveData();
-
-                try { Telegram.WebApp.HapticFeedback.impactOccurred('light'); } catch (e) { console.error("Haptic error:", e); }
-
-                // Show floating point animation
-                const pointsEarnedText = document.createElement('div');
-                pointsEarnedText.className = 'floating-point';
-                pointsEarnedText.textContent = `+${POINTS_PER_TAP}`;
-                
-                // Position relative to the tap area or click position
-                const rect = DOMElements.dogTapArea.getBoundingClientRect();
-                // Use clientX/Y if available from touch/mouse event, otherwise center of dog tap area
-                const x = event.clientX || (rect.left + rect.width / 2);
-                const y = event.clientY || (rect.top + rect.height / 2);
-
-                pointsEarnedText.style.left = `${x - rect.left}px`; // Position within tap-page-content
-                pointsEarnedText.style.top = `${y - rect.top - DOMElements.pointsDisplay.offsetHeight - 20}px`; // Adjust to appear above dog
-
-                DOMElements.tapPageContent.appendChild(pointsEarnedText);
-                setTimeout(() => {
-                    pointsEarnedText.remove();
-                }, 1000);
-
-            } else {
-                showToast("Not enough energy!");
-            }
-        }
-
-        function refillEnergy() {
-            const now = Date.now();
-            const timeElapsedSeconds = (now - appState.lastEnergyUpdateTimestamp) / 1000;
-            const energyToRefill = timeElapsedSeconds * ENERGY_REFILL_RATE_PER_SECOND;
-
-            if (energyToRefill > 0) {
-                appState.energy = Math.min(MAX_ENERGY, appState.energy + energyToRefill);
-                appState.lastEnergyUpdateTimestamp = now;
-                updateEnergyDisplay();
-                saveData(); // Save data less frequently for energy refills to avoid too many writes
-            }
-        }
-        
-        setInterval(() => {
-            if (appState.energy < MAX_ENERGY) {
-                refillEnergy();
-            }
-        }, ENERGY_REFILL_INTERVAL_MS);
-
-
-        function completeTask(taskId) {
-            const task = appState.tasks.find(t => t.id === taskId);
-            if (task && !task.completed) {
-                task.completed = true;
-                appState.points += task.reward;
-                
-                updatePointsDisplay();
-                renderTaskPage(); // Re-render tasks to update button state
-                saveData();
-                showToast(`Task "${task.title}" completed! +${task.reward} points.`);
-                try { Telegram.WebApp.HapticFeedback.notificationOccurred('success'); } catch (e) { console.error("Haptic error:", e); }
-            }
-        }
-
-        function toggleWithdrawDetails(method) {
-            DOMElements.paypalDetailsDiv.classList.toggle('active', method === 'paypal');
-            DOMElements.bankDetailsDiv.classList.toggle('active', method === 'bank');
-            DOMElements.cryptoDetailsDiv.classList.toggle('active', method === 'crypto');
-        }
-
-        DOMElements.withdrawMethodSelect.addEventListener('change', (event) => {
-            toggleWithdrawDetails(event.target.value);
-        });
-        
-        function handleWithdrawal() {
-            const amount = parseFloat(DOMElements.withdrawAmountInput.value);
-            const method = DOMElements.withdrawMethodSelect.value;
-
-            if (isNaN(amount) || amount <= 0) {
-                showToast("Please enter a valid amount.", "error");
-                return;
-            }
-            if (amount > appState.points) {
-                showToast("Insufficient points.", "error");
-                return;
-            }
-            if (!method) {
-                showToast("Please select a withdrawal method.", "error");
-                return;
-            }
-
-            // Basic validation for selected method fields (can be expanded)
-            let detailsFilled = true;
-            if (method === 'paypal' && !document.getElementById('paypal-email').value) detailsFilled = false;
-            if (method === 'bank' && (!document.getElementById('bank-account-name').value || !document.getElementById('bank-account-number').value)) detailsFilled = false;
-            if (method === 'crypto' && !document.getElementById('crypto-address').value) detailsFilled = false;
-            
-            if (!detailsFilled) {
-                showToast("Please fill in all required details for the selected method.", "error");
-                return;
-            }
-
-            // Simulate withdrawal
-            appState.points -= amount;
-            updatePointsDisplay();
-            saveData();
-            
-            DOMElements.withdrawAmountInput.value = ''; // Clear input
-            showToast(`Withdrawal of ${amount.toLocaleString()} points via ${method} initiated. (This is a simulation)`, "success");
-            try { Telegram.WebApp.HapticFeedback.notificationOccurred('success'); } catch (e) { console.error("Haptic error:", e); }
-        }
-
-        let toastTimeout;
-        function showToast(message, type = 'info') { // type can be 'info', 'success', 'error'
-            DOMElements.toastNotification.textContent = message;
-            DOMElements.toastNotification.className = 'show'; // Reset classes then add 'show'
-            
-            // Optional: Add type-specific styling if needed via classes
-            // DOMElements.toastNotification.classList.add(type); 
-
-            clearTimeout(toastTimeout);
-            toastTimeout = setTimeout(() => {
-                DOMElements.toastNotification.className = '';
-                // DOMElements.toastNotification.classList.remove(type);
-            }, 3000);
-        }
-
-        // --- Initialization ---
-        function init() {
-            Telegram.WebApp.ready(); // Inform Telegram API that the app is ready
-            try { Telegram.WebApp.expand(); } catch (e) { console.error("Expand error:", e); }
-
-
-            loadData(); // Load saved data or set defaults
-
-            // Setup Navigation
-            DOMElements.navButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    showPage(button.dataset.page);
-                });
-            });
-
-            // Setup Tap Action
-            DOMElements.dogTapArea.addEventListener('click', handleTap); // Pass event for click coordinates
-            DOMElements.dogTapArea.addEventListener('touchstart', (e) => { // Prevent double tap zoom on mobile
-                e.preventDefault();
-                handleTap(e.touches[0]); // Pass touch event for coordinates
-            }, { passive: false });
-
-
-            // Setup Withdraw Action
-            DOMElements.withdrawButton.addEventListener('click', handleWithdrawal);
-            
-            // Initial Page Load
-            showPage(appState.activePage || 'tap-page'); // Show last active page or default to tap
-
-            // Initial UI updates
-            updatePointsDisplay();
-            updateEnergyDisplay();
-            refillEnergy(); // Recalculate energy based on time since last open
-
-            console.log("TapSwap App Initialized");
-            console.log("Current User:", appState.currentUser);
-            console.log("Current State:", appState);
-        }
-
-        // --- Start the app ---
-        // Use DOMContentLoaded for browsers, Telegram.WebApp.ready() handles its own timing
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', init);
-        } else {
-            init(); // DOMContentLoaded has already fired
-        }
-
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
 
+/* ====== Global Styles & Variables ====== */
+:root {
+    --primary-dark-blue: #0A2540;
+    --primary-medium-blue: #0077CC; /* Main interactive blue */
+    --accent-light-blue: #E6F2FF;
+    --neutral-dark-gray: #2D3748; /* For text, slightly softer than pure black */
+    --neutral-medium-gray: #718096; /* For subheadings */
+    --neutral-light-gray: #F7FAFC; /* Page background */
+    --card-bg: #FFFFFF;
+    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --card-hover-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --border-radius: 8px;
+    --font-primary: 'Inter', sans-serif; /* Or your chosen font */
+    --font-logo: 'Manrope', sans-serif; /* Or your chosen font */
+}
+
+html {
+    scroll-behavior: smooth;
+    box-sizing: border-box;
+}
+
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
+body {
+    font-family: var(--font-primary);
+    color: var(--neutral-dark-gray);
+    background-color: var(--neutral-light-gray);
+    margin: 0;
+    line-height: 1.6;
+    font-size: 16px; /* Base font size */
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+a {
+    color: var(--primary-medium-blue);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+a:hover {
+    color: var(--primary-dark-blue);
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* ====== Header ====== */
+.site-header {
+    background-color: #fff;
+    padding: 15px 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.logo {
+    font-family: var(--font-logo);
+    font-size: 1.8rem; /* Responsive font size */
+    font-weight: 700;
+    color: var(--primary-dark-blue);
+    text-decoration: none;
+}
+.logo:hover {
+    color: var(--primary-medium-blue);
+}
+
+.main-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+}
+.main-nav li {
+    margin-left: 25px;
+}
+.main-nav a {
+    font-weight: 500;
+    color: var(--neutral-dark-gray);
+    padding: 5px 0;
+    position: relative;
+}
+.main-nav a:hover, .main-nav a.active {
+    color: var(--primary-medium-blue);
+}
+.main-nav a.active::after, .main-nav a:hover::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--primary-medium-blue);
+}
+
+.header-contact .email-link {
+    color: var(--neutral-medium-gray);
+    font-size: 0.9rem;
+}
+.header-contact .email-link i {
+    margin-right: 5px;
+    color: var(--primary-medium-blue);
+}
+.header-contact .email-link:hover {
+    color: var(--primary-medium-blue);
+}
+
+.mobile-nav-toggle {
+    display: none; /* Hidden on desktop */
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--primary-dark-blue);
+    cursor: pointer;
+}
+
+/* ====== Hero Section ====== */
+.hero-section {
+    background: linear-gradient(135deg, var(--primary-medium-blue) 0%, var(--primary-dark-blue) 100%);
+    color: #fff;
+    padding: 80px 0; /* More padding */
+    text-align: center;
+}
+.hero-content h1 {
+    font-family: var(--font-logo);
+    font-size: 2.8rem; /* Responsive */
+    font-weight: 700;
+    margin-bottom: 15px;
+    line-height: 1.2;
+}
+.hero-content .subheadline {
+    font-size: 1.2rem; /* Responsive */
+    margin-bottom: 30px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    opacity: 0.9;
+}
+.cta-button {
+    background-color: #fff;
+    color: var(--primary-medium-blue);
+    padding: 15px 35px;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    font-size: 1.1rem;
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+    display: inline-block;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.cta-button:hover {
+    background-color: var(--accent-light-blue);
+    color: var(--primary-dark-blue);
+    transform: translateY(-2px);
+}
+.hero-illustrations {
+    margin-top: 40px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+.hero-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+.hero-icon i {
+    font-size: 2rem;
+    margin-bottom: 8px;
+    padding: 15px;
+    background-color: rgba(255,255,255,0.1);
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ====== Search Bar Section ====== */
+.search-section {
+    padding: 40px 0;
+    background-color: #fff; /* White or very light distinct background */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+}
+.search-bar {
+    display: flex;
+    max-width: 700px;
+    margin: 0 auto;
+    border: 1px solid #DDD; /* Softer border */
+    border-radius: var(--border-radius);
+    overflow: hidden; /* To contain button */
+}
+.search-bar input[type="search"] {
+    flex-grow: 1;
+    padding: 15px 20px;
+    border: none;
+    font-size: 1rem;
+    outline: none;
+}
+.search-bar input[type="search"]::placeholder {
+    color: var(--neutral-medium-gray);
+}
+.search-bar button {
+    background-color: var(--primary-medium-blue);
+    color: white;
+    border: none;
+    padding: 0 25px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: background-color 0.3s ease;
+}
+.search-bar button:hover {
+    background-color: var(--primary-dark-blue);
+}
+
+.tools-anchor { /* For smooth scrolling from hero CTA */
+    padding-top: 70px; /* Adjust based on sticky header height */
+    margin-top: -70px;
+}
+
+/* ====== Tool Sections ====== */
+.tool-category-section {
+    padding: 60px 0;
+}
+.tool-category-section:nth-child(odd) { /* Alternate background for sections */
+    /* background-color: #fff; */ /* Or keep all tool sections on the light gray */
+}
+.section-heading {
+    font-family: var(--font-logo);
+    font-size: 2.2rem; /* Responsive */
+    color: var(--primary-dark-blue);
+    text-align: center;
+    margin-bottom: 10px;
+    position: relative;
+}
+/* Optional heading underline style */
+.section-heading::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 3px;
+    background-color: var(--primary-medium-blue);
+    margin: 10px auto 0;
+}
+
+.section-subheading {
+    text-align: center;
+    color: var(--neutral-medium-gray);
+    font-size: 1.1rem;
+    margin-bottom: 40px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.tool-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Responsive grid */
+    gap: 25px;
+}
+
+.tool-card {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 25px;
+    box-shadow: var(--card-shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #E2E8F0; /* Subtle border */
+}
+.tool-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--card-hover-shadow);
+}
+.tool-card .tool-icon {
+    font-size: 2rem;
+    color: var(--primary-medium-blue);
+    margin-bottom: 15px;
+    height: 40px; /* Ensure consistent icon area height */
+    display: flex;
+    align-items: center;
+}
+.tool-card .tool-icon i {
+    line-height: 1;
+}
+.tool-card .tool-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary-dark-blue);
+    margin-bottom: 8px;
+}
+.tool-card .tool-description {
+    font-size: 0.9rem;
+    color: var(--neutral-medium-gray);
+    flex-grow: 1; /* Pushes button to bottom */
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+.tool-card .tool-button {
+    background-color: var(--primary-medium-blue);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 6px; /* Slightly smaller radius for inner button */
+    text-align: center;
+    font-weight: 500;
+    display: inline-block; /* Or block if you want full width */
+    align-self: flex-start; /* Aligns button to start if card content is short */
+    transition: background-color 0.3s ease;
+}
+.tool-card .tool-button:hover {
+    background-color: var(--primary-dark-blue);
+    color: white;
+}
+.tool-card .tool-button i {
+    margin-left: 8px;
+    font-size: 0.8em;
+    transition: transform 0.2s ease;
+}
+.tool-card .tool-button:hover i {
+    transform: translateX(3px);
+}
+
+
+/* Hidden by default, shown by JS */
+.tool-card.hidden {
+    display: none;
+}
+
+/* ====== Footer ====== */
+.site-footer-main {
+    background-color: var(--primary-dark-blue);
+    color: #A0AEC0; /* Light gray for text on dark bg */
+    padding: 50px 0 0;
+    font-size: 0.9rem;
+}
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    padding-bottom: 40px;
+}
+.footer-logo-tagline .logo {
+    color: #fff;
+    font-size: 1.6rem;
+    display: block;
+    margin-bottom: 10px;
+}
+.footer-logo-tagline .tagline {
+    font-size: 0.95rem;
+    margin: 0;
+}
+.footer-links h4, .footer-contact h4 {
+    color: #fff;
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+.footer-links ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.footer-links li {
+    margin-bottom: 8px;
+}
+.footer-links a, .footer-contact .email-link {
+    color: #A0AEC0;
+}
+.footer-links a:hover, .footer-contact .email-link:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+.footer-contact .email-link i {
+    margin-right: 8px;
+}
+.footer-contact .contact-note {
+    font-size: 0.85rem;
+    margin-top: 10px;
+}
+.footer-bottom {
+    text-align: center;
+    padding: 20px 0;
+    border-top: 1px solid #2D3748; /* Darker border inside footer */
+    font-size: 0.85rem;
+}
+
+/* ====== Responsive Design ====== */
+@media (max-width: 992px) {
+    .hero-content h1 { font-size: 2.4rem; }
+    .hero-content .subheadline { font-size: 1.1rem; }
+    .section-heading { font-size: 2rem; }
+
+    .main-nav {
+        display: none; /* Hide nav by default on mobile */
+        position: absolute;
+        top: 100%; /* Position below header */
+        left: 0;
+        width: 100%;
+        background-color: #fff;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        padding: 10px 0;
+    }
+    .main-nav.active {
+        display: block; /* Show when toggled */
+    }
+    .main-nav ul {
+        flex-direction: column;
+        align-items: center;
+    }
+    .main-nav li {
+        margin: 10px 0;
+    }
+    .mobile-nav-toggle {
+        display: block;
+    }
+    .header-contact {
+        display: none; /* Optionally hide header email on small screens or move to mobile nav */
+    }
+}
+
+@media (max-width: 768px) {
+    .container { width: 95%; }
+    .hero-content h1 { font-size: 2rem; }
+    .hero-content .subheadline { font-size: 1rem; }
+    .cta-button { padding: 12px 25px; font-size: 1rem; }
+    .hero-illustrations { gap: 15px; }
+    .hero-icon i { font-size: 1.5rem; padding: 12px; width: 50px; height: 50px;}
+
+    .search-bar { flex-direction: column; }
+    .search-bar input[type="search"] { border-bottom: 1px solid #DDD; border-radius: var(--border-radius) var(--border-radius) 0 0;}
+    .search-bar button { border-radius: 0 0 var(--border-radius) var(--border-radius); padding: 12px;}
+
+    .tool-grid {
+        grid-template-columns: 1fr; /* Single column on small mobile */
+        gap: 20px;
+    }
+    .section-heading { font-size: 1.8rem; }
+    .section-subheading { font-size: 1rem; }
+
+    .footer-content {
+        grid-template-columns: 1fr; /* Stack footer columns */
+        text-align: center;
+    }
+    .footer-logo-tagline .logo { margin: 0 auto 10px; }
+    .footer-links ul, .footer-contact {
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    body { font-size: 15px; }
+    .logo { font-size: 1.5rem; }
+    .hero-content h1 { font-size: 1.8rem; }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+
+    // Mobile Navigation Toggle
+    const mobileNavToggle = document.querySelector('.mobile-nav-toggle');
+    const mainNav = document.querySelector('.main-nav');
+
+    if (mobileNavToggle && mainNav) {
+        mobileNavToggle.addEventListener('click', function() {
+            mainNav.classList.toggle('active');
+            const isExpanded = mainNav.classList.contains('active');
+            mobileNavToggle.setAttribute('aria-expanded', isExpanded);
+            // Optional: Change icon (bars to times)
+            mobileNavToggle.innerHTML = isExpanded ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+        });
+    }
+
+    // Smooth scroll for navigation links and CTA
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                // If mobile nav is open, close it
+                if (mainNav && mainNav.classList.contains('active')) {
+                    mainNav.classList.remove('active');
+                    mobileNavToggle.setAttribute('aria-expanded', 'false');
+                    mobileNavToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                }
+                targetElement.scrollIntoView({
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+
+    // Live Tool Search/Filter
+    const searchInput = document.getElementById('toolSearchInput');
+    const toolCards = document.querySelectorAll('.tool-card');
+    const toolSections = document.querySelectorAll('.tool-category-section');
+
+    if (searchInput && toolCards.length > 0) {
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase().trim();
+
+            toolCards.forEach(card => {
+                const toolName = card.dataset.toolName ? card.dataset.toolName.toLowerCase() : '';
+                const keywords = card.dataset.keywords ? card.dataset.keywords.toLowerCase() : '';
+                const isVisible = toolName.includes(searchTerm) || keywords.includes(searchTerm);
+                card.style.display = isVisible ? 'flex' : 'none'; // Use flex for tool-card display
+            });
+
+            // Optionally hide/show entire sections if all tools within are hidden
+            toolSections.forEach(section => {
+                const visibleCardsInSection = section.querySelectorAll('.tool-card[style*="display: flex"]');
+                section.style.display = visibleCardsInSection.length > 0 ? 'block' : 'none';
+            });
+        });
+    }
+
+    // Set current year in footer
+    const currentYearSpan = document.getElementById('currentYear');
+    if (currentYearSpan) {
+        currentYearSpan.textContent = new Date().getFullYear();
+    }
+});
