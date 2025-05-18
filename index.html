@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tools Hub - Your Daily Tools, All in One Place</title>
+    <!-- Favicon (example - generate a real one) -->
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <!-- Link to your CSS file -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Consider using an icon library like FontAwesome or Heroicons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- ====== Top Header ====== -->
+    <header class="site-header">
+        <div class="container header-container">
+            <a href="index.html" class="logo">Tools Wonder</a>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html" class="active">Home</a></li>
+                    <li><a href="#tools">Tools</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="header-contact">
+                <a href="mailto:toolsHub@gmail.com" class="email-link">
+                    <i class="fas fa-envelope"></i> toolsHub@gmail.com
+                </a>
+            </div>
+            <button class="mobile-nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <!-- ====== Hero Section ====== -->
+        <section class="hero-section">
+            <div class="container hero-content">
+                <h1>Your Daily Tools, All in One Place</h1>
+                <p class="subheadline">Convert, calculate, compress, and simplify your everyday tasks — fast and free.</p>
+                <a href="#tools" class="cta-button">Explore Tools</a>
+                <div class="hero-illustrations">
+                    <!-- Simple icons representing tool categories -->
+                    <span class="hero-icon"><i class="fas fa-image"></i> Image</span>
+                    <span class="hero-icon"><i class="fas fa-file-alt"></i> Document</span>
+                    <span class="hero-icon"><i class="fas fa-calculator"></i> Calculate</span>
+                    <span class="hero-icon"><i class="fas fa-code"></i> Code</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ====== Search Bar Section ====== -->
+        <section class="search-section">
+            <div class="container">
+                <form id="toolSearchForm" class="search-bar">
+                    <input type="search" id="toolSearchInput" placeholder="Search a tool by name or keyword…">
+                    <button type="submit" aria-label="Search"><i class="fas fa-search"></i></button>
+                </form>
+            </div>
+        </section>
+
+        <!-- ====== Tools Sections ====== -->
+        <div id="tools" class="tools-anchor"></div> <!-- Anchor for "Explore Tools" and Nav -->
+
+        <!-- 🖼 Image Tools -->
+        <section class="tool-category-section" data-category="Image Tools">
+            <div class="container">
+                <h2 class="section-heading">🖼 Image Tools</h2>
+                <p class="section-subheading">Manipulate and optimize your images with ease.</p>
+                <div class="tool-grid">
+                    <!-- Tool Card Example -->
+                    <div class="tool-card" data-tool-name="Image Converter" data-keywords="convert jpg png webp gif">
+                        <div class="tool-icon"><i class="fas fa-exchange-alt"></i></div>
+                        <h3 class="tool-name">Image Converter</h3>
+                        <p class="tool-description">Convert images between various formats (JPG, PNG, WEBP, etc.).</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Image Compressor" data-keywords="compress reduce size optimize">
+                        <div class="tool-icon"><i class="fas fa-compress-arrows-alt"></i></div>
+                        <h3 class="tool-name">Image Compressor</h3>
+                        <p class="tool-description">Reduce image file size without significant quality loss.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Image Resizer" data-keywords="resize scale dimensions">
+                        <div class="tool-icon"><i class="fas fa-crop-alt"></i></div> <!-- More like crop but also used for resize-->
+                        <h3 class="tool-name">Image Resizer</h3>
+                        <p class="tool-description">Change image dimensions to your desired width and height.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Image Cropper" data-keywords="crop select area">
+                        <div class="tool-icon"><i class="fas fa-crop"></i></div>
+                        <h3 class="tool-name">Image Cropper</h3>
+                        <p class="tool-description">Crop images to a specific area or aspect ratio.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Image to Text (OCR)" data-keywords="ocr extract text scan">
+                        <div class="tool-icon"><i class="fas fa-file-signature"></i></div>
+                        <h3 class="tool-name">Image to Text (OCR)</h3>
+                        <p class="tool-description">Extract text content from images accurately.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Image Rotator/Flipper" data-keywords="rotate flip mirror">
+                        <div class="tool-icon"><i class="fas fa-sync-alt"></i></div>
+                        <h3 class="tool-name">Image Rotator/Flipper</h3>
+                        <p class="tool-description">Rotate or flip your images horizontally or vertically.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 📄 Document Tools -->
+        <section class="tool-category-section" data-category="Document Tools">
+            <div class="container">
+                <h2 class="section-heading">📄 Document Tools</h2>
+                <p class="section-subheading">Manage your PDF and other document files efficiently.</p>
+                <div class="tool-grid">
+                    <div class="tool-card" data-tool-name="PDF to Word / Word to PDF" data-keywords="pdf word doc docx convert">
+                        <div class="tool-icon"><i class="fas fa-file-word"></i></div>
+                        <h3 class="tool-name">PDF to Word / Word to PDF</h3>
+                        <p class="tool-description">Convert PDFs to editable Word files and vice versa.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="PDF Compressor" data-keywords="pdf compress reduce size">
+                        <div class="tool-icon"><i class="fas fa-file-archive"></i></div>
+                        <h3 class="tool-name">PDF Compressor</h3>
+                        <p class="tool-description">Reduce the file size of your PDF documents.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="PDF Merger & Splitter" data-keywords="pdf merge combine split separate">
+                        <div class="tool-icon"><i class="fas fa-object-group"></i></div>
+                        <h3 class="tool-name">PDF Merger & Splitter</h3>
+                        <p class="tool-description">Combine multiple PDFs or split one into several.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                     <div class="tool-card" data-tool-name="Document Converter" data-keywords="convert files office text">
+                        <div class="tool-icon"><i class="fas fa-file-export"></i></div>
+                        <h3 class="tool-name">Document Converter</h3>
+                        <p class="tool-description">Convert various document types (DOC, TXT, ODT, etc.).</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="PDF Lock/Unlock" data-keywords="pdf protect secure encrypt decrypt password">
+                        <div class="tool-icon"><i class="fas fa-lock"></i> / <i class="fas fa-unlock"></i></div>
+                        <h3 class="tool-name">PDF Lock/Unlock</h3>
+                        <p class="tool-description">Add or remove password protection from PDFs.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="eSign PDF" data-keywords="pdf sign signature digital electronic">
+                        <div class="tool-icon"><i class="fas fa-signature"></i></div>
+                        <h3 class="tool-name">eSign PDF</h3>
+                        <p class="tool-description">Electronically sign your PDF documents quickly.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 🧮 Calculator Tools -->
+        <section class="tool-category-section" data-category="Calculator Tools">
+            <div class="container">
+                <h2 class="section-heading">🧮 Calculator Tools</h2>
+                <p class="section-subheading">Perform various calculations for finance, health, and more.</p>
+                <div class="tool-grid">
+                    <div class="tool-card" data-tool-name="Scientific Calculator" data-keywords="math science functions">
+                        <div class="tool-icon"><i class="fas fa-calculator"></i></div>
+                        <h3 class="tool-name">Scientific Calculator</h3>
+                        <p class="tool-description">Advanced calculator with scientific functions.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Age Calculator" data-keywords="age birthday years months days">
+                        <div class="tool-icon"><i class="fas fa-birthday-cake"></i></div>
+                        <h3 class="tool-name">Age Calculator</h3>
+                        <p class="tool-description">Calculate age based on birth date.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="BMI Calculator" data-keywords="bmi body mass index health weight">
+                        <div class="tool-icon"><i class="fas fa-heartbeat"></i></div>
+                        <h3 class="tool-name">BMI Calculator</h3>
+                        <p class="tool-description">Calculate your Body Mass Index.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Loan EMI Calculator" data-keywords="loan emi interest mortgage payment">
+                        <div class="tool-icon"><i class="fas fa-money-check-alt"></i></div>
+                        <h3 class="tool-name">Loan EMI Calculator</h3>
+                        <p class="tool-description">Estimate your Equated Monthly Installments.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="GST Calculator" data-keywords="gst tax goods services tax">
+                        <div class="tool-icon"><i class="fas fa-percentage"></i></div>
+                        <h3 class="tool-name">GST Calculator</h3>
+                        <p class="tool-description">Calculate Goods and Services Tax.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Currency Converter" data-keywords="currency exchange rate money">
+                        <div class="tool-icon"><i class="fas fa-coins"></i></div>
+                        <h3 class="tool-name">Currency Converter</h3>
+                        <p class="tool-description">Convert between different world currencies.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 🔤 Text Tools -->
+        <section class="tool-category-section" data-category="Text Tools">
+            <div class="container">
+                <h2 class="section-heading">🔤 Text Tools</h2>
+                <p class="section-subheading">Format, analyze, and manipulate your text content.</p>
+                <div class="tool-grid">
+                    <div class="tool-card" data-tool-name="Text Case Converter" data-keywords="text case uppercase lowercase title sentence">
+                        <div class="tool-icon"><i class="fas fa-font"></i></div>
+                        <h3 class="tool-name">Text Case Converter</h3>
+                        <p class="tool-description">Change text to uppercase, lowercase, title case, etc.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Word & Character Counter" data-keywords="word character count length">
+                        <div class="tool-icon"><i class="fas fa-sort-numeric-down"></i></div>
+                        <h3 class="tool-name">Word & Character Counter</h3>
+                        <p class="tool-description">Count words and characters in your text.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Remove Duplicate Lines" data-keywords="text remove duplicate lines unique">
+                        <div class="tool-icon"><i class="fas fa-stream"></i></div>
+                        <h3 class="tool-name">Remove Duplicate Lines</h3>
+                        <p class="tool-description">Eliminate repeated lines from your text.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Text Sorter" data-keywords="text sort lines alphabetical numerical">
+                        <div class="tool-icon"><i class="fas fa-sort-alpha-down"></i></div>
+                        <h3 class="tool-name">Text Sorter</h3>
+                        <p class="tool-description">Sort lines of text alphabetically or numerically.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Text Reverser" data-keywords="text reverse backward words lines">
+                        <div class="tool-icon"><i class="fas fa-undo-alt"></i></div>
+                        <h3 class="tool-name">Text Reverser</h3>
+                        <p class="tool-description">Reverse the order of characters, words, or lines.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Text Encryptor/Decryptor" data-keywords="text encrypt decrypt secure cipher">
+                        <div class="tool-icon"><i class="fas fa-user-secret"></i></div>
+                        <h3 class="tool-name">Text Encryptor/Decryptor</h3>
+                        <p class="tool-description">Encrypt or decrypt text using various algorithms.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 🌐 Web/Developer Tools -->
+        <section class="tool-category-section" data-category="Web Developer Tools">
+            <div class="container">
+                <h2 class="section-heading">🌐 Web/Developer Tools</h2>
+                <p class="section-subheading">Essential utilities for web developers and programmers.</p>
+                <div class="tool-grid">
+                    <div class="tool-card" data-tool-name="HTML/CSS/JS Minifier" data-keywords="minify html css js javascript optimize">
+                        <div class="tool-icon"><i class="fab fa-html5"></i> <i class="fab fa-css3-alt"></i> <i class="fab fa-js-square"></i></div>
+                        <h3 class="tool-name">HTML/CSS/JS Minifier</h3>
+                        <p class="tool-description">Reduce file size of your web code.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="JSON Formatter & Validator" data-keywords="json format validate beautify lint">
+                        <div class="tool-icon"><i class="fas fa-code-branch"></i></div> <!-- Generic code icon -->
+                        <h3 class="tool-name">JSON Formatter & Validator</h3>
+                        <p class="tool-description">Format, beautify, and validate JSON data.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Base64 Encoder/Decoder" data-keywords="base64 encode decode string binary">
+                        <div class="tool-icon"><i class="fas fa-shield-alt"></i></div> <!-- Icon for encoding/security -->
+                        <h3 class="tool-name">Base64 Encoder/Decoder</h3>
+                        <p class="tool-description">Encode to or decode from Base64.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="URL Encoder/Decoder" data-keywords="url encode decode percent encoding">
+                        <div class="tool-icon"><i class="fas fa-link"></i></div>
+                        <h3 class="tool-name">URL Encoder/Decoder</h3>
+                        <p class="tool-description">Encode or decode URL components.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Color Picker & Converter" data-keywords="color picker hex rgb hsl convert">
+                        <div class="tool-icon"><i class="fas fa-palette"></i></div>
+                        <h3 class="tool-name">Color Picker & Converter</h3>
+                        <p class="tool-description">Pick colors and convert between formats.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                     <div class="tool-card" data-tool-name="Regex Tester" data-keywords="regex regular expression test match pattern">
+                        <div class="tool-icon"><i class="fas fa-search-plus"></i></div> <!-- Icon for pattern matching -->
+                        <h3 class="tool-name">Regex Tester</h3>
+                        <p class="tool-description">Test and debug regular expressions live.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 🎨 Color Tools -->
+        <section class="tool-category-section" data-category="Color Tools">
+            <div class="container">
+                <h2 class="section-heading">🎨 Color Tools</h2>
+                <p class="section-subheading">Explore, generate, and analyze colors for your projects.</p>
+                <div class="tool-grid">
+                    <div class="tool-card" data-tool-name="Color Picker from Image" data-keywords="color picker image extract eyedropper">
+                        <div class="tool-icon"><i class="fas fa-eye-dropper"></i></div>
+                        <h3 class="tool-name">Color Picker from Image</h3>
+                        <p class="tool-description">Extract colors from an uploaded image.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="HEX to RGB Converter" data-keywords="hex rgb color code convert">
+                        <div class="tool-icon"><i class="fas fa-fill-drip"></i></div>
+                        <h3 class="tool-name">HEX to RGB Converter</h3>
+                        <p class="tool-description">Convert HEX color codes to RGB and vice versa.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Gradient Generator" data-keywords="gradient css background color">
+                        <div class="tool-icon"><i class="fas fa-palette"></i></div> <!-- Using palette as it implies multiple colors -->
+                        <h3 class="tool-name">Gradient Generator</h3>
+                        <p class="tool-description">Create CSS color gradients visually.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Contrast Checker" data-keywords="color contrast accessibility wcag">
+                        <div class="tool-icon"><i class="fas fa-adjust"></i></div>
+                        <h3 class="tool-name">Contrast Checker</h3>
+                        <p class="tool-description">Check color contrast for accessibility.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Palette Generator" data-keywords="color palette scheme generator">
+                        <div class="tool-icon"><i class="fas fa-swatchbook"></i></div>
+                        <h3 class="tool-name">Palette Generator</h3>
+                        <p class="tool-description">Generate harmonious color palettes.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Color Blindness Simulator" data-keywords="color blind simulate accessibility vision">
+                        <div class="tool-icon"><i class="fas fa-low-vision"></i></div>
+                        <h3 class="tool-name">Color Blindness Simulator</h3>
+                        <p class="tool-description">Simulate how colors appear to color-blind users.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 🌍 SEO & Marketing Tools -->
+        <section class="tool-category-section" data-category="SEO Marketing Tools">
+            <div class="container">
+                <h2 class="section-heading">🌍 SEO & Marketing Tools</h2>
+                <p class="section-subheading">Analyze and optimize your content for search engines and marketing.</p>
+                <div class="tool-grid">
+                     <div class="tool-card" data-tool-name="Keyword Density Checker" data-keywords="seo keyword density analysis content">
+                        <div class="tool-icon"><i class="fas fa-search-dollar"></i></div> <!-- Search with a focus on value -->
+                        <h3 class="tool-name">Keyword Density Checker</h3>
+                        <p class="tool-description">Analyze the keyword density of your text.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Meta Tag Analyzer" data-keywords="seo meta tags title description analyzer">
+                        <div class="tool-icon"><i class="fas fa-tags"></i></div>
+                        <h3 class="tool-name">Meta Tag Analyzer</h3>
+                        <p class="tool-description">Analyze meta tags of a webpage.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Word Counter" data-keywords="seo word count content length marketing">
+                        <div class="tool-icon"><i class="fas fa-file-word"></i></div> <!-- Re-using for word count focus -->
+                        <h3 class="tool-name">Word Counter</h3>
+                        <p class="tool-description">Count words in your articles or posts.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 🛠️ Utility Tools -->
+        <section class="tool-category-section" data-category="Utility Tools">
+            <div class="container">
+                <h2 class="section-heading">🛠️ Utility Tools</h2>
+                <p class="section-subheading">A collection of handy miscellaneous utilities for various tasks.</p>
+                <div class="tool-grid">
+                    <div class="tool-card" data-tool-name="QR Code Generator & Scanner" data-keywords="qr code generator scanner generate scan">
+                        <div class="tool-icon"><i class="fas fa-qrcode"></i></div>
+                        <h3 class="tool-name">QR Code Generator & Scanner</h3>
+                        <p class="tool-description">Create and read QR codes easily.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Barcode Generator" data-keywords="barcode generator create">
+                        <div class="tool-icon"><i class="fas fa-barcode"></i></div>
+                        <h3 class="tool-name">Barcode Generator</h3>
+                        <p class="tool-description">Generate various types of barcodes.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="UUID Generator" data-keywords="uuid guid generate unique identifier">
+                        <div class="tool-icon"><i class="fas fa-fingerprint"></i></div> <!-- For uniqueness -->
+                        <h3 class="tool-name">UUID Generator</h3>
+                        <p class="tool-description">Generate universally unique identifiers.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                     <div class="tool-card" data-tool-name="Unit Converter" data-keywords="unit convert length weight temperature volume">
+                        <div class="tool-icon"><i class="fas fa-balance-scale-right"></i></div>
+                        <h3 class="tool-name">Unit Converter</h3>
+                        <p class="tool-description">Convert between various units of measurement.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Time Zone Converter" data-keywords="time zone world clock convert">
+                        <div class="tool-icon"><i class="fas fa-globe-americas"></i></div>
+                        <h3 class="tool-name">Time Zone Converter</h3>
+                        <p class="tool-description">Convert times between different time zones.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card" data-tool-name="Random Number/Password Generator" data-keywords="random number password generate secure">
+                        <div class="tool-icon"><i class="fas fa-random"></i> <i class="fas fa-key"></i></div>
+                        <h3 class="tool-name">Random Number/Password Generator</h3>
+                        <p class="tool-description">Generate random numbers or secure passwords.</p>
+                        <a href="#" class="tool-button">Use Tool <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ====== Footer ====== -->
+    <footer class="site-footer-main" id="contact">
+        <div class="container footer-content">
+            <div class="footer-logo-tagline">
+                <a href="index.html" class="logo footer-logo">Tools Wonder</a>
+                <p class="tagline">Simplifying your digital life.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Use</a></li>
+                    <li><a href="#tools">All Tools</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h4>Contact Us</h4>
+                <a href="mailto:webtool4433@gmail.com" class="email-link">
+                    <i class="fas fa-envelope"></i> webtool4433@gmail.com
+                </a>
+                <p class="contact-note">For inquiries and support.</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© <span id="currentYear"></span> Tools Hub. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
